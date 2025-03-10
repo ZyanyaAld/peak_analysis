@@ -158,6 +158,10 @@ Este archivo contiene información crucial sobre las regiones de unión de los 144
     -   Leer cada fila del archivo de picos.
     -   Extraer los campos `TF_name`, `Peak_start`, `Peak_end` para cada entrada.
     -   Para cada `TF_name`, usar las posiciones `Peak_start` y `Peak_end` para extraer la secuencia correspondiente del archivo FASTA del genoma.
+    -   Validar que las coordenadas (Peak_start, Peak_end) esten dentro de los limites del FASTA.
+    -   Permitir aplicar filtros opcionales (por ejemplo, longitud mínima de secuencia).
+    -   Se podría optimizar si se trata de archivos grandes.
+    
 3.  **Generación de FASTA:**
     
     -   Agrupar las secuencias extraídas por `TF_name`.
@@ -170,8 +174,9 @@ Este archivo contiene información crucial sobre las regiones de unión de los 144
 2. Leer archivo de picos
 3. Para cada registro:
    a. Obtener TF_name, Peak_start, Peak_end
-   b. Extraer secuencia del genoma usando Peak_start y Peak_end
-   c. Agrupar secuencias por TF_name
+   b.Validar que Peak_start y Peak_end estan dentro de los límites del genoma.
+   c. Extraer secuencia del genoma usando Peak_start y Peak_end
+   d. Agrupar secuencias por TF_name (usando diccionarios)
 4. Por cada TF_name:
    a. Crear archivo FASTA
    b. Escribir secuencias en archivo
@@ -193,6 +198,8 @@ Este archivo contiene información crucial sobre las regiones de unión de los 144
     -   Iterar sobre cada archivo `.fa` en el directorio.
     -   Generar una línea de comando para ejecutar `meme` usando cada archivo FASTA.
     -   Incluir opciones necesarias (por ejemplo, `-oc <output_directory>`, `-mod oops`, etc.) y asegurar nombrar el directorio de salida para cada ejecución de `meme`.
+    -   Permitir personalizar los parametros de `meme`
+    
 3.  **Salida del Script:**
     
     -   Salida a pantalla
@@ -205,6 +212,7 @@ Este archivo contiene información crucial sobre las regiones de unión de los 144
 2. Leer todos los archivos FASTA en el directorio
 3. Para cada archivo FASTA:
    a. Formar comando: meme <archivo_fasta> -oc <nombre_directorio> ...
+   b. Personalizar parámetros
    b. Imprimir comando
 4. Redireccionar salida a un archivo script: run_meme.sh
 5. Fin
@@ -226,7 +234,7 @@ rectangle "Sistema de Extracción y Creación de FASTA (Python)" {
 
 rectangle "Script de Automatización de meme (Shell)" {
     usecase "Leer directorio de archivos FASTA" as UC4
-    usecase "Generar script de comandos meme" as UC5
+    usecase "Generar script de comandos meme (con parametros personalizables)" as UC5
 }
 
 usuario --> UC1 : Ejecuta script Python
@@ -249,7 +257,7 @@ graph TD
   UC2 -->|Guarda archivos FASTA| UC3["?? Generar archivos FASTA"]
   
   usuario -->|Ejecuta script Shell| UC4["?? Leer directorio de archivos FASTA"]
-  UC4 -->|Crea script de ejecución de meme| UC5["?? Generar script de comandos meme"]
+  UC4 -->|Crea script de ejecución de meme| UC5["?? Generar script de comandos meme(con parametros personalizables)"]
 ```
 
 
